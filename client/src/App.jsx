@@ -1,10 +1,25 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+  const [data, setData] = useState(undefined)
+
+  useEffect(() => {
+    const getData = async () => {
+      let resp = await fetch(`${import.meta.env.VITE_NODE_ENV === 'prod' ? '' : 'http://localhost:8000'}/api/hello`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: 'React' })
+      })
+      resp = await resp.json()
+      setData(resp.message)
+    }
+
+    getData()
+  }, [])
 
   return (
     <>
@@ -17,6 +32,7 @@ function App() {
         </a>
       </div>
       <h1>Vite + React</h1>
+      <h2>{data}</h2>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
